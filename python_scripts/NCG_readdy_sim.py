@@ -802,7 +802,7 @@ def gen_fusion_reactions_1(fusion_input_particles,fusion_output_particles,rate,d
             
             fusion_name="Fusion_"+str(fusion_input_particle_1)+"_"+str(fusion_input_particle_2)
             
-            fusion_reg = f"{fusion_name}: Particle({fusion_input_particle_1}) + Particle({fusion_input_particle_2}) -> Particle({fusion_output_particle_1}--{fusion_output_particle_2})"
+            fusion_reg = f"{fusion_name}: Particle({fusion_input_particle_1}) + Particle({fusion_input_particle_2}) -> Particle({fusion_output_particle_1}--{fusion_output_particle_2})[self=true]"
         
             #print(fusion_reg)
     
