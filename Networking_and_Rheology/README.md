@@ -20,6 +20,9 @@ Bayesian optimisation of bead-spring parameters, using combined optimisation of 
 NCG_network_properties.ipynb:
 Evaluation of network properties and of rheological behaviour of nanomotif networks assembled with bead-spring simulations. (Data in ReaDDy_simulations.zip on zenodo)
 
+NCG_network_properties_2.ipynb:
+Evaluation of network properties and rheological behaviour including hydrodynamic interactions and 3-armed versions of nanomotif networks assembled with bead-spring simulations. (Data in ReaDDy_simulations.zip on zenodo)
+
 NCG_ML_rheo_pred.ipynb:
 Using Gaussian processes and Bayesian optimisation, connectivity between nanomotifs is predicted given target rheological responses. (Data in ReaDDy_simulations.zip on zenodo)
 
