@@ -538,8 +538,85 @@ def theo_graph_gen(num_nodes_list,m_list,p_list,rs_list,omega_t_sim1,t_sim1,lim_
         
     return storage_mod_list, loss_mod_list, relaxation_mod_list,relax_times_list
 
+#Version2: include option to multiply relaxation times and moduli with pre factor
+#generate theoretical graphs and extract rheo. prop. based on parameters in input lists
+def theo_graph_gen2(num_nodes_list,m_list,p_list,rs_list,omega_t_sim1,t_sim1,pre_tau_list,pre_mod_list,lim_to_one_relax_time=None,lower_t_lim=0,upper_t_lim=9999):
+    storage_mod_list=[]
+    loss_mod_list=[]
+    relaxation_mod_list=[]
+    relax_times_list=[]
+    
+    for i in range(len(num_nodes_list)):
+            
+        num_nodes_rd_1=num_nodes_list[i]
+        m=m_list[i]
+        p=p_list[i]
+        rs=rs_list[i]
+        conn_matrix_gen_rd_1=generate_rd_graph_laplacian3(N=num_nodes_rd_1, m=m, p=p,rs=rs)
+        print(0.5*np.trace(conn_matrix_gen_rd_1))
+        fig1=plt.figure(figsize=(3,3))
+        ax1 = fig1.add_subplot(111)
+        cax1=ax1.matshow(conn_matrix_gen_rd_1, cmap='viridis')
+        fig1.colorbar(cax1,shrink=0.8)
+        
+        eigenvalues_gen_rd_1, eigenvectors_gen_rd_1 = np.linalg.eig(conn_matrix_gen_rd_1)
+        
+        
+        
+        #get relaxation times for non-zero eigenvalues
+        #!! sometimes very small eigenvalues are calculated that should probably be zero, for instance for graph laplacian for N monomers, only N-1 non-zero eigenvalues exist
+        eigenvalues_gen_rd_1_nz=np.array([e for e in eigenvalues_gen_rd_1 if abs(e)>10**-9])
+        tau_gen_rd_1=relax_times(zeta=1,b=1,k=1,T=pre_tau_list[i],eigv_lambda=eigenvalues_gen_rd_1_nz)[0:lim_to_one_relax_time]
+        
+        tau_gen_rd_1=np.array(sorted(tau_gen_rd_1,reverse=True))[:]
+        #print(tau_gen_rd_1)
+        #print(len(tau_gen_rd_1))
+        relax_times_list.append(tau_gen_rd_1)
+
+        tau_gen_rd_1=tau_gen_rd_1[tau_gen_rd_1<upper_t_lim]
+        tau_gen_rd_1=tau_gen_rd_1[tau_gen_rd_1>lower_t_lim]
+
+        
+        #get storage mod and loss mod
+        #omega_gen_rd_1=np.geomspace(10**-2,10**4,10**4)
+        #t_gen_rd_1=np.geomspace(10**-2,10**3,10**4)
+        
+        storage_mod_gen_rd_1=storage_mod(phi=pre_mod_list[i],k=1,T=1,N=num_nodes_rd_1,b=1,tau=tau_gen_rd_1[:],omega=omega_t_sim1)
+        loss_mod_gen_rd_1=loss_mod_deref(phi=pre_mod_list[i],k=1,T=1,N=num_nodes_rd_1,b=1,tau=tau_gen_rd_1[:],omega=omega_t_sim1)
+        relaxation_mod_gen_rd_1=relaxation_mod(phi=1,k=1,T=1,N=num_nodes_rd_1,b=1,tau=tau_gen_rd_1[:],t=t_sim1)
+        storage_mod_gen_rd_1=[x.real if isinstance(x, complex) else x for x in storage_mod_gen_rd_1]
+        loss_mod_gen_rd_1=[x.real if isinstance(x, complex) else x for x in loss_mod_gen_rd_1]
+        relaxation_mod_gen_rd_1=[x.real if isinstance(x, complex) else x for x in relaxation_mod_gen_rd_1]
+
+        storage_mod_list.append(storage_mod_gen_rd_1)
+        loss_mod_list.append(loss_mod_gen_rd_1)
+        relaxation_mod_list.append(relaxation_mod_gen_rd_1)
+        
+        fig1=plt.figure(figsize=(3,3))
+        ax1 = fig1.add_subplot(111)
+        
+        ax1.errorbar(omega_t_sim1,storage_mod_gen_rd_1,fmt="-",label="G'")
+        ax1.errorbar(omega_t_sim1,loss_mod_gen_rd_1,fmt="-",label="G''")
+        
+        omega_gen_rd_2=np.geomspace(10**0,10**2,10**3)
+        ax1.errorbar(omega_t_sim1,omega_t_sim1**2,label=r"$\omega^2$",fmt="--")
+        ax1.errorbar(omega_t_sim1,omega_t_sim1**0.5,label=r"$\omega^{1/2}$",fmt="--")
+        ax1.errorbar(omega_t_sim1,omega_t_sim1**1,label=r"$\omega$",fmt="--")
+        ax1.errorbar(omega_t_sim1,omega_t_sim1**-1,label=r"$\omega^{-1}$",fmt="--")
+        
+        plt.xscale("log")
+        plt.yscale("log")
+        plt.grid()
+        plt.xticks(fontname = "Arial",fontsize=11)
+        plt.yticks(fontname = "Arial",fontsize=11)
+        ax1.set_ylabel("Dynamic modulus",fontname = "Arial",fontsize=11)
+        ax1.set_xlabel("Frequency",fontname = "Arial",fontsize=11)
+        ax1.legend(loc="upper left",prop={'family': 'Arial','size': 11})
+        
+    return storage_mod_list, loss_mod_list, relaxation_mod_list,relax_times_list
+    
 #shift sim. data from lists to match cross over freq. from exp data in list
-def shift_mod(storage_mod_list,loss_mod_list,omega_t_list,  storage_mod_exp_list,loss_mod_exp_list,freq_list):
+def shift_mod(storage_mod_list,loss_mod_list,omega_t_list,  storage_mod_exp_list,loss_mod_exp_list,freq_list,X_low=5* 10**-10,X_high=5* 10**10):
     storage_mod_list_shift=[]
     loss_mod_list_shift=[]
     omega_t_list_shift=[]
@@ -571,9 +648,9 @@ def shift_mod(storage_mod_list,loss_mod_list,omega_t_list,  storage_mod_exp_list
         mult_factor_freq.append(omega_inters_target_1/omega_inters_4)
 
         print("R^2 for storage mod")
-        calc_r2_for_dyn_mod(x_ref=freq,y_ref=G_storage_exp, x2=omega_t_sim1_shift_rd_1,y2=storage_mod_gen_rd_1_shift,X_low=5* 10**-10,X_high=5* 10**10)
+        calc_r2_for_dyn_mod(x_ref=freq,y_ref=G_storage_exp, x2=omega_t_sim1_shift_rd_1,y2=storage_mod_gen_rd_1_shift,X_low=X_low,X_high=X_high)
         print("R^2 for loss mod")
-        calc_r2_for_dyn_mod(x_ref=freq,y_ref=G_loss_exp, x2=omega_t_sim1_shift_rd_1,y2=loss_mod_gen_rd_1_shift,X_low=5* 10**-10,X_high=5* 10**10)
+        calc_r2_for_dyn_mod(x_ref=freq,y_ref=G_loss_exp, x2=omega_t_sim1_shift_rd_1,y2=loss_mod_gen_rd_1_shift,X_low=X_low,X_high=X_high)
 
         storage_mod_list_shift.append(storage_mod_gen_rd_1_shift)
         loss_mod_list_shift.append(loss_mod_gen_rd_1_shift)
