@@ -1,0 +1,1 @@
+This folder contains target angle distributions from oxDNA simulations (produced in NCG_target_angle_x_motif.ipynb)  and optimised parameters (produced in NCG_param_opt_x_motif_BoTorch.ipynb) for the bead-spring model in ReaDDy.

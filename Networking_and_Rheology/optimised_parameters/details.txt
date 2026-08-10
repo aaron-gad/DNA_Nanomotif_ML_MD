@@ -1,0 +1,1 @@
+saved, optimised parameters for X-motif from NCG_BO_opt_x_motif.ipynb, using the split optimisation strategy
