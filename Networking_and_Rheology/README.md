@@ -11,6 +11,9 @@ Angles within and between arms of X-shaped nanomotifs are derived from oxDNA MD 
 NCG_BO_opt_validation.ipynb:
 To validate Bayesian parameter optimisation for the bead-spring model, targets from random bead-spring parameters are selected and used for iterative optimisation. (Data in ReaDDy_simulations_opt_eval.zip on zenodo)
 
+NCG_BO_opt_validation_2.ipynb:
+Updated validation with finite-size correction for KS-test. (Data in ReaDDy_simulations_opt_eval.zip on zenodo)
+
 NCG_BO_opt_x_motif.ipynb:
 Bayesian optimisation of bead-spring parameters, given oxDNA target angle distributions. (Data in ReaDDy_simulations.zip on zenodo)
 
@@ -22,6 +25,12 @@ Evaluation of network properties and of rheological behaviour of nanomotif netwo
 
 NCG_network_properties_2.ipynb:
 Evaluation of network properties and rheological behaviour including hydrodynamic interactions and 3-armed versions of nanomotif networks assembled with bead-spring simulations. (Data in ReaDDy_simulations.zip on zenodo)
+
+NCG_network_properties_3.ipynb:
+Extended analysis of network properties with additional validation, stability and finite-size tests as well as test of graph-based predictions of absolute moduli shifts. (Data in ReaDDy_simulations.zip on zenodo)
+
+NCG_run_networking_sim_1.ipynb:
+Supporting script, only to run equilibration and production simulations in ReaDDy.
 
 NCG_ML_rheo_pred.ipynb:
 Using Gaussian processes and Bayesian optimisation, connectivity between nanomotifs is predicted given target rheological responses. (Data in ReaDDy_simulations.zip on zenodo)
