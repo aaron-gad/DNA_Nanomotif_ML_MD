@@ -1,6 +1,6 @@
 # Evaluation of networking behaviour and rheological properties of DNA nanomotif networks
 
-This folder contains scripts and notebooks for simulations of X-shaped nanomotifs that assemble into networks, which can be evaluated with graph-based rheology. Simulation files evaluated as well as copies of all relevant scripts were uploaded to zenodo (https://doi.org/10.5281/zenodo.18338016). The analysis is split into the following notebooks:
+This folder contains scripts and notebooks for simulations of X-shaped nanomotifs that assemble into networks, which can be evaluated with graph-based rheology. Simulation files evaluated as well as copies of all relevant scripts were uploaded to zenodo (https://doi.org/10.5281/zenodo.18338015). Additionally, a compact, self-contained tutorial that walks through to the most important steps of the full workflow is available in the tutorial folder. The full analysis is split into the following notebooks:
 
 NCG_thermodyn_x_motif.ipynb:
 Thermodynamic insights into X-shaped nanomotifs from oxDNA simulations. MD runs and umbrella sampling are evaluated. (Data in oxDNA_simulations.zip on zenodo)
